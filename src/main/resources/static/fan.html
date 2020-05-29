@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>upload</title>
+	<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+	<style type="text/css">
+
+		#form{
+			width: 70%;
+			height: 200px;
+			position: relative;
+			top:50px;
+			left: 15%;
+		}
+
+		#form_left{
+			width: 50%;
+			height: 80%;
+			position: relative;
+			float: left;
+		}
+		#form_right{
+			width: 50%;
+			height: 80%;
+			position: relative;
+			float: right;
+		}
+
+		#table{
+			width: 70%;
+			position: relative;
+			left: 15%;
+		}
+
+		#left{
+			width: 1%;
+			height: 100%;
+			position: relative;
+			float: right;
+		}
+		/* #left_left{
+			width: 50%;
+			height: 100%;
+			position: relative;
+			float: left;
+		}
+		#left_center{
+			width: 50%;
+			height: 100%;
+			position: relative;
+			float: right;
+		}
+		
+		.one{
+			width: 100%;
+			height: 50px;
+			position: relative;
+			
+			text-align: center;
+			margin: 3px 0 0 0;
+			border-bottom: 1px pink solid;
+		}
+		.two{
+			width: 100%;
+			height: 50px;
+			position: relative;
+			
+			text-align: center;	
+			margin: 3px 0 0 0;
+			border-bottom: 1px pink solid;
+		} */
+
+
+		#right{
+			width: 99%;
+			height: 95%;
+			position: relative;
+			float: left;
+			left: 0;
+			padding-top: 5%;
+		}
+		.fanyi{
+			width: 10%;
+			height: 60px;
+			position: relative;
+			border-bottom: 1px pink solid;
+			display: block;
+			float: right;
+			padding:5px 0 5px 0;
+		}
+		.zhongwen{
+			width: 10%;
+			height: 50px;
+			position: relative;
+			float: left;
+			padding-top: 20px;
+			border-bottom: 1px pink solid;
+			margin: 0 auto;
+			text-align: center;
+		}
+		.english{
+			width: 10%;
+			height: 50px;
+			position: relative;
+			padding-top: 20px;
+			float: left;
+			border-bottom: 1px pink solid;
+			margin: 0 auto;
+			text-align: center;
+			}
+		.englishContent{
+			width: 35%;
+			height: 50px;
+			position: relative;
+			padding-top: 20px;
+			float: left;
+			border-bottom: 1px pink solid;
+			margin: 0 auto;
+			display: inline-block;
+			word-wrap: break-word;
+			white-space: normal;
+			text-align: center;
+			}
+		.zhongwenContent{
+			width: 30%;
+			height: 50px;
+			position: relative;
+			padding-top: 20px;
+			float: left;
+			border-bottom: 1px pink solid;
+			margin: 0 auto;
+			text-align: center;
+			}
+		.deleteData{
+			width: 5%;
+			height: 50px;
+			position: relative;
+			padding-top: 20px;
+			float: left;
+			border-bottom: 1px pink solid;
+			margin: 0 auto;
+		}
+
+		#show_result{
+			width: 75%;
+			position: relative;
+			padding-left: 25%;
+			display: none;
+		}
+		</style>
+</head>
+<body>
+
+<div id="form">
+
+	<div id="form_left" name="uploadFile">	
+		请选文件：<input type="file" name="file" id="file">
+		</br>
+		请输入中文单词：<input type="text" name="china" id="china">
+		</br>
+		请输入英文单词：<input type="text" name="english" id="english">
+		</br>
+	    请输入中文例句：<input type="text" name="chinaContent" id="chinaContent"/>
+	    </br>
+	    请输入英文例句：<input type="text" name="englishContent" id="englishContent"/>
+	    </br>
+	    <input type="button" value="上传" id="upload" />
+
+	    <p id="show_result"></p>
+	</div>
+
+	<div id="form_right" name="searchForm">
+		请输入关键字：
+		</br>
+		<input type="text" name="search" id="searchWord">
+		<button id="search">搜索</button>
+	</div>
+
+</div>
+
+
+
+<div id="table">
+
+	<div id="right">
+		<audio controls class="fanyi">翻译</audio>
+		<a href="javascript:(0)" class="deleteData">删除</a>
+		<span class="zhongwen">中文</span>
+		<span class="english">英文</span>
+		<span class="zhongwenContent">中文例句</span>
+		<span class="englishContent">英文例句</sapn>
+	</div>
+	
+</div>
+
+<script type="text/javascript">
+
+$(function(){
+
+
+	$("#test").click(function(){
+		$("#show_result").css('display','block');
+		$("#show_result").css('color','green');
+		$("#show_result").text("上传成功");
+	});
+	$("#test2").click(function(){
+		$("#show_result").css('display','block');
+		$("#show_result").css('color','red');
+		$("#show_result").text("上传失败");
+	});
+
+	function clear(){
+		$("#right").empty();
+		$("#right").append("<audio controls class='fanyi'>翻译</audio>");
+		$("#right").append("<a href='javascript:(0) class='deleteData'>删除</a>");
+		$("#right").append("<span class='zhongwen'>中文</span>");
+		$("#right").append("<span class='english'>英文</span>");
+		$("#right").append("<span class='zhongwenContent'>中文例句</span>");
+		$("#right").append("<span class='englishContent'>英文例句</span>");
+	}
+
+
+	$.ajax({
+		url: "http://127.0.0.1:8080/audio/fanyi/selectAllFanyi",
+		type: 'get',
+		success: function(res){
+			
+			for (var i = 0; i < res.length; i++) {
+				if (res[i].chinaContent != null) {
+					console.log(res[i].chinaContent.length);
+					var zz = new String(res[i].chinaContent);
+					console.log(zz.substring(0,10));
+				}
+				console.log(res[i].id);
+				var fanyi = $("<audio controls class='fanyi'></audio>").attr("src",res[i].audio_address);
+				//var deleteData = $("<a class='deleteData'></a>").text("删除");
+				var deleteData = $("<a class='deleteData'>删除</a>").attr('href','http://127.0.0.1:8080/audio/fanyi/deleteById?id='+res[i].id);
+				var zhongwen = $("<span class='zhongwen'></span>").text(res[i].china);
+				if (res[i].china != null) {
+                    if (res[i].china.length > 5) {
+                        zhongwen = $("<span class='zhongwen'></span>").text(res[i].china.substring(0,5)).append("..");
+                    }else{
+                        zhongwen = $("<span class='zhongwen'></span>").text(res[i].china);
+                    }
+                }
+                	
+				var english = $("<span class='english'></span>").text(res[i].english);
+				var english = $("<span class='english'></span>").text(res[i].english);
+                if (res[i].english != null) {
+                    if (res[i].english.length > 5) {
+                        english = $("<span class='english'></span>").text(res[i].english.substring(0,7)).append("..");
+                    }else{
+                        english = $("<span class='english'></span>").text(res[i].english);
+                    }
+                }
+				
+				var zhongwenContent = $("<span class='zhongwenContent'></span>").text(res[i].chinaContent);
+				if (res[i].chinaContent != null) {
+					if (res[i].chinaContent.length > 25) {
+						/*var newChina = new String(res[i].chinaContent.length);
+						console.log(newChina.substring(0,10));*/
+						zhongwenContent = $("<span class='zhongwenContent'></span>").text(res[i].chinaContent.substring(0,25)).append("<a href='http://127.0.0.1:8080/audio/fanyi/newPage?id="+res[i].id+"'>更多</a>");
+					}else{
+						zhongwenContent = $("<span class='zhongwenContent'></span>").text(res[i].chinaContent);	
+					}
+				}
+				
+				var englishContent = $("<p class='englishContent'></p>").text(res[i].englishContent);
+				if (res[i].englishContent != null) {
+					if (res[i].englishContent.length > 50) {
+						englishContent = $("<p class='englishContent'></p>").text(res[i].englishContent.substring(0,50)).append("<a href='http://127.0.0.1:8080/audio/fanyi/newPage?id="+res[i].id+"'>更多</a>");
+					}else{
+						englishContent = $("<p class='englishContent'></p>").text(res[i].englishContent);
+					}
+				}
+				
+				$(".englishContent:last").after(fanyi);
+				$(".fanyi:last").after(deleteData);
+				$(".deleteData:last").after(zhongwen);
+				$(".zhongwen:last").after(english);
+				$(".english:last").after(zhongwenContent);
+				$(".zhongwenContent:last").after(englishContent);
+			}
+		},
+		error: function(){
+			console.log("fail to get message");
+		}
+	});
+
+	$("#upload").click(function(){
+		var myForm = new FormData();
+		myForm.append('file',$("#file")[0].files[0]);
+		myForm.append('china',$("#china").val());
+		myForm.append('english',$("#english").val());
+		myForm.append('chinaContent',$("#chinaContent").val());
+		myForm.append('englishContent',$("#englishContent").val());
+		if ($("#file")[0].files[0] == "" || $("#file")[0].files[0] == null)
+		{
+			alert("文件不能为空");
+			return;
+		}
+		if($("#china").val() == ""){
+			alert("中文单词不能为空");
+			return;
+		}
+		if ($("#english").val() == "") {
+			alert("英文单词不能为空");
+			return;
+		}
+		if ($("#chinaContent").val() == "") {
+			alert("中文例句不能为空");
+			return;
+		}
+		if ($("#englishContent").val() == "") {
+			alert("英文例句不能为空");
+			return;
+		}
+
+
+		$.ajax({
+			url: "http://127.0.0.1:8080/audio/fanyi/upload",
+			data: myForm,
+			type: 'POST',
+			dataType:"json",
+			contentType: false,
+			processData: false,
+			success: function(result){
+				if (result == 1) {
+					console.log("上传完成");
+					$("#show_result").css('display','block');
+					$("#show_result").css('color','green');
+					$("#show_result").text("上传成功");
+				}else{
+					console.log("上传失败");
+					$("#show_result").css('display','block');
+					$("#show_result").css('color','red');
+					$("#show_result").text("上传失败");
+				}
+			},
+			error: function(){
+				console.log("上传失败");
+			}
+		});
+	});
+
+
+	$("#search").click(function(){
+		clear();
+		var chinaWords = $("#searchWord").val();
+		if (chinaWords == null || chinaWords == "") {
+			alert("请输入关键字");
+			return;
+		}
+		$.ajax({
+			url: "http://127.0.0.1:8080/audio/fanyi/search?chinaWords="+chinaWords,
+			type: 'get',
+			success: function(res){
+				console.log(res);
+				if (res == null) {
+					alert("单词不存在，请重新输入");
+					return;
+				}
+				$("#show_result").css('display','none');
+				
+					var fanyi = $("<audio controls class='fanyi'></audio>").attr("src",res.audio_address);
+					var zhongwen = $("<span class='zhongwen'></span>").text(res.china);	
+					if (res.china != null) {
+	                    if (res.china.length > 5) {
+	                        zhongwen = $("<span class='zhongwen'></span>").text(res.china.substring(0,5)).append("..");
+	                    }else{
+	                        zhongwen = $("<span class='zhongwen'></span>").text(res.china);
+	                    }
+                	}
+					var english = $("<span class='english'></span>").text(res.english);	
+					if (res.english != null) {
+	                    if (res.english.length > 5) {
+	                        english = $("<span class='english'></span>").text(res.english.substring(0,7)).append("..");
+	                    }else{
+	                        english = $("<span class='english'></span>").text(res.english);
+	                    }
+	                }
+	                
+					var zhongwenContent = $("<span class='zhongwenContent'></span>").text(res.chinaContent);
+					if (res.chinaContent != null) {
+	                    if (res.chinaContent.length > 25) {
+	                        console.log("length" + res.chinaContent.length);
+	                        zhongwenContent = $("<span class='zhongwenContent'></span>").text(res.chinaContent.substring(0,25)).append("<a href='http://127.0.0.1:8080/audio/fanyi/newPage?id="+res.id+"'>更多</a>");
+	                    }else{
+	                        zhongwenContent = $("<span class='zhongwenContent'></span>").text(res.chinaContent); 
+	                    }
+	                }
+					var englishContent = $("<sapn class='englishContent'></span>").text(res.englishContent);
+					if (res.englishContent != null) {
+	                    if (res.englishContent.length > 50) {
+	                        englishContent = $("<p class='englishContent'></p>").text(res.englishContent.substring(0,50)).append("<a href='http://127.0.0.1:8080/audio/fanyi/newPage?id="+res.id+"'>更多</a>");
+	                    }else{
+	                    	englishContent = $("<sapn class='englishContent'></span>").text(res.englishContent);
+	                    }
+	                }
+					
+					$(".englishContent:last").after(fanyi);
+					$(".fanyi:last").after(zhongwen);
+					$(".zhongwen:last").after(english);
+					$(".english:last").after(zhongwenContent);
+					$(".zhongwenContent:last").after(englishContent);
+				
+		},
+			error: function(){
+				console.log("搜索失败");
+			}
+		});
+	});
+
+	$(".deleteData").click(function(){
+		document.location.reload();
+		return;
+	});
+	
+
+});
+
+</script>
+
+
+
+</body>
+</html>
